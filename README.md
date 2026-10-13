@@ -44,7 +44,8 @@ python missions/run_all.py    # Chạy M1 → M5, in kết quả
 pytest -q                     # Chạy 15 unit + integration tests
 ```
 
-Kết quả xuất ra thư mục `outputs/`: `report.md`, `savings.png`, `focus_export.csv`.
+Kết quả xuất ra thư mục `outputs/`: `report.md`, `savings.png`,
+`focus_export.csv` và bài phân tích `analysis.md`.
 
 ---
 
@@ -71,8 +72,8 @@ Day25-Track2-GPU-FinOps-Lab/
 │   ├── m4_allocation.py         # Mission 4: Phân bổ chi phí
 │   ├── m5_report.py             # Mission 5: Báo cáo tổng hợp
 │   └── run_all.py               # Chạy M1–M5 liên tiếp
-├── tests/                    # 15 unit + integration tests (pytest)
-├── outputs/                  # Kết quả sinh ra (report.md, savings.png, ...)
+├── tests/                    # Unit, integration và extension tests (pytest)
+├── outputs/                  # report.md, savings.png, focus_export.csv, analysis.md
 ├── bonus/                    # Phần mở rộng không bắt buộc
 │   ├── litellm_tracker/      # Giả lập LiteLLM proxy + budget cap
 │   ├── local_model/          # Đo tok/s với model chạy CPU
@@ -115,7 +116,7 @@ Day25-Track2-GPU-FinOps-Lab/
 |---|---|---|
 | `price_catalog.csv` | 7 GPU | `on_demand_hr`, `spot_hr`, `reserved_3yr_hr`, `peak_tflops_fp16`, `peak_bw_tbs`, `watts` |
 | `gpu_telemetry.csv` | 11 GPU × 24 giờ | `gpu_util_pct`, `achieved_tflops`, `achieved_bw_tbs`, `power_w` |
-| `token_usage.csv` | 2,400 request | `route_tier`, `input/output/cached_input_tokens`, `is_batch`, `is_reasoning`, `team`, `project` |
+| `token_usage.csv` | 2,400 request | `route_tier`, `input/output/cached_input_tokens`, `is_batch`, `is_reasoning`, `team`, `project`, `cache_prefix_id`, `cache_read`, `cache_prefix_reads` |
 | `workloads.csv` | 8 job | `hours_per_day`, `days`, `interruptible`, `gpu_type`, `num_gpus` |
 
 > `data/generate.py` dùng seed cố định — tái tạo luôn cho kết quả giống nhau.
@@ -136,7 +137,8 @@ Lab **vẫn pass** mà không cần làm các phần này. Làm để hiểu sâ
 
 ## Đầu ra & Chấm điểm
 
-Nộp `outputs/report.md` + `savings.png` + một bài viết ngắn:
+Nộp `outputs/report.md`, `outputs/savings.png`, `outputs/focus_export.csv`
+và bài viết ngắn 1–2 trang `outputs/analysis.md`:
 
 | Thành phần | Trọng số |
 |---|---|

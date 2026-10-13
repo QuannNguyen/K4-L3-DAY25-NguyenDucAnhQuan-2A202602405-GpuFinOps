@@ -32,8 +32,8 @@ def run(verbose: bool = True) -> dict:
     coverage = allocation.tag_coverage(priced, TAGS)
     ready = allocation.chargeback_ready(coverage)
 
-    # write a FOCUS-style export (first 50 rows as a sample)
-    focus = allocation.to_focus_rows(priced[:50])
+    # Export every priced request so the file is usable for downstream allocation.
+    focus = allocation.to_focus_rows(priced)
     out_path = os.path.join(ROOT, "outputs", "focus_export.csv")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w", newline="") as f:

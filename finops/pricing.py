@@ -52,6 +52,30 @@ def discount_stack(
     return cache_mult * batch_mult
 
 
+def cache_break_even_reads(write_cost: float = 1.25, read_discount: float = 0.10) -> float:
+    """Reads needed to recover a cache-write premium.
+
+    `write_cost` is expressed in uncached-read cost equivalents and
+    `read_discount` is the fraction paid for each cached read.
+    """
+    if write_cost < 0:
+        raise ValueError("write_cost must be non-negative")
+    if not 0.0 <= read_discount < 1.0:
+        raise ValueError("read_discount must be in [0, 1)")
+    return write_cost / (1.0 - read_discount)
+
+
+def cache_is_worth_it(
+    avg_reads: float,
+    write_cost: float = 1.25,
+    read_discount: float = 0.10,
+) -> bool:
+    """Return whether cached-read savings exceed the one-time write premium."""
+    if avg_reads < 0:
+        raise ValueError("avg_reads must be non-negative")
+    return avg_reads > cache_break_even_reads(write_cost, read_discount)
+
+
 def break_even_utilization(discount_frac: float) -> float:
     """Utilization at which a commitment pays off ~= 1 - discount.
 

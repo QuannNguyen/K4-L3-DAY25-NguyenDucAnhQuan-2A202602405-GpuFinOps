@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import os
 import random
+from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SEED = 25
@@ -108,16 +109,22 @@ def gen_token_usage(rng, n=2400):
         cacheable = inp * (0.7 if team in ("assistant", "rag") else 0.1)
         cached = int(cacheable * rng.uniform(0.5, 0.95))
         out = rng.randint(80, 1200) * (6 if is_reasoning else 1)  # reasoning tax
+        cache_prefix = f"system:{team}" if team in ("assistant", "rag") and cached > 0 else ""
         rows.append([
             f"2026-06-15T{rng.randint(0,23):02d}:{rng.randint(0,59):02d}:00", model, team,
             PROJECTS[team] if rng.random() > 0.08 else "",  # ~8% untagged
             route_tier, inp, out, cached, int(is_batch), int(is_reasoning),
-            rng.randint(80, 4000),
+            rng.randint(80, 4000), cache_prefix, int(bool(cache_prefix)),
         ])
+    # Treat each team's shared system prompt as one reusable cache prefix.
+    prefix_reads = Counter(r[11] for r in rows if r[11])
+    for row in rows:
+        row.append(prefix_reads[row[11]] if row[11] else 0)
     with open(os.path.join(HERE, "token_usage.csv"), "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["ts","model","team","project","route_tier","input_tokens","output_tokens",
-                    "cached_input_tokens","is_batch","is_reasoning","latency_ms"])
+                    "cached_input_tokens","is_batch","is_reasoning","latency_ms",
+                    "cache_prefix_id","cache_read","cache_prefix_reads"])
         w.writerows(rows)
 
 
